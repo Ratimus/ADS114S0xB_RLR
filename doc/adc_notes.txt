@@ -1,0 +1,94 @@
+Commands:   p. 63
+Reg. map:   p. 70
+Pseudocode: p. 88
+
+
+p. 12:
+You only need to wait for DRDY to go low if you're doing a read from the holding buffer (i.e. not using RDATA)
+You can do an RDATA read at any time (regardless of DRDY state), and you can also send all the other commands
+
+Looks like: you send the START command and then it just goes. You can then read it whenever you want, subject
+to the above restriction.
+TODO: confirm this
+
+ADC notes with pseudocode from the ADS114S08 datasheet:
+
+// timing variables:
+// TIMING CHARACTERISTICS on p. 12
+// these will be based on the clock frequency, so we'll probably need to set them up as scale factors
+POWERUP_SETTLING_TIME = 2.2 // ms
+
+SCLK_PERIOD = 100 ns
+
+// Delay between CS_BAR falling edge and first SCLK rising edge
+td_CSSC = 20 ns
+
+// Delay between final SCLK falling edge and first CS_BAR rising edge
+td_SCCS = 20 ns
+
+// NOTE: SPI interface resets when an entire byte is not sent within the specified timeout time
+t_CLK = 1 / f_CLK
+
+// How long to hold RESET_BAR low
+tw_RESET = 4 * t_CLK
+
+// hw variables:
+ADS114S08_CS_BAR_PIN = -1
+DRDY_PIN = -1
+
+// command variables:
+Read the status register using the RREG command to check that the RDY bit is 0
+--> RDY_BIT
+RREG command
+WREG command
+RESET command (06h)
+START command (08h)
+Clear the FL_POR flag by writing 00h
+16 SCLK rising edges
+
+
+The following list shows a pseudo code sequence with the required steps to set up the device and the
+microcontroller that interfaces to the ADC in order to take subsequent readings from the ADS114S0x in
+continuous conversion mode. The dedicated DRDY pin is used to indicate availability of new conversion data.
+
+// MCU Power-up and settling
+Power-up so that all supplies reach minimum operating levels;
+Delay for a minimum of 2.2 ms to allow power supplies to settle and power-up reset to complete;
+
+// MCU HW init
+Configure the SPI interface of the microcontroller to SPI mode 1 (CPOL = 0, CPHA =1);
+If the CS pin is not tied low permanently, configure the microcontroller GPIO connected to CS as an output;
+Configure the microcontroller GPIO connected to the DRDY pin as a falling edge triggered interrupt
+input;
+
+// ADC reset
+Set CS to the device low;
+Delay for a minimum of td(CSSC);
+Send the RESET command (06h) to make sure the device is properly reset after power-up; //Optional
+Delay for a minimum of 4096 · tCLK;
+
+// ADC init
+Read the status register using the RREG command to check that the RDY bit is 0; //Optional
+Clear the FL_POR flag by writing 00h to the status register; //Optional
+Write the respective register configuration with the WREG command;
+For verification, read back all configuration registers with the RREG command;
+
+// ADC start continuous conversion
+Send the START command (08h) to start converting in continuous conversion mode;
+Delay for a minimum of td(SCCS);
+Clear CS to high (resets the serial interface);
+Loop
+{
+    Wait for DRDY to transition low;
+    Take CS low;
+    Delay for a minimum of td(CSSC);
+    Send the RDATA command;
+    Send 16 SCLK rising edges to read out conversion data on DOUT/DRDY;
+    Delay for a minimum of td(SCCS);
+    Clear CS to high;
+}
+Take CS low;
+Delay for a minimum of td(CSSC);
+Send the STOP command (0Ah) to stop conversions and put the device in standby mode;
+Delay for a minimum of td(SCCS);
+Clear CS to high;

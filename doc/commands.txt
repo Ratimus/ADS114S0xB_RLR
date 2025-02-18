@@ -1,0 +1,31 @@
+Table 24. Command Definitions
+COMMAND     DESCRIPTION                     FIRST COMMAND BYTE          SECOND COMMAND BYTE
+Control Commands
+NOP         No operation                    0000 0000 (00h)                   —
+WAKEUP      Wake-up from power-down mode    0000 001x (02h, 03h)(1)           —
+POWERDOWN   Enter power-down mode           0000 010x (04h, 05h)(1)           —
+RESET       Reset the device                0000 011x (06h, 07h)(1)           —
+START       Start conversions               0000 100x (08h, 09h)(1)           —
+STOP        Stop conversions                0000 101x (0Ah, 0Bh)(1)           —
+Calibration Commands
+SYOCAL      System offset calibration       0001 0110 (16h)                   —
+SYGCAL      System gain calibration         0001 0111 (17h)                   —
+SFOCAL      Self offset calibration         0001 1001 (19h)                   —
+Data Read Command
+RDATA       Read data by command            0001 001x (12h / 13h)(1)          —
+Register Read and Write Commands
+RREG        Read nnnnn registers starting   001r rrrr(2)                000n nnnn(3)
+                at address rrrrr
+WREG        Write nnnnn registers starting  010r rrrr(2)                000n nnnn(3)
+                at address rrrrr
+
+1. x = don't care
+2. r rrrr = starting register address
+3. n nnnn = number of registers to read or write - 1
+
+Commands can be sent at any time, either during a conversion or when conversions are stopped. However, if
+register read or write commands are in progress when conversion data are ready, the ADC blocks loading of
+conversion data to the output shift register. The CS input pin can be taken high between commands; or held low
+between consecutive commands. CS must stay low for the entire command sequence. Complete the command,
+or terminate the command before completion by taking CS high. Only send the commands that are listed in
+Table 24.

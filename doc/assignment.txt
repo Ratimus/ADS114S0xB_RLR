@@ -1,0 +1,23 @@
+Vast
+
+Objectives:
+
+For an ADS114S0xB:
+
+Bare metal device driver that can:
+ - initialize the device
+ - valid read/write SPI (really? why not a separate driver for SPI? Dependency injection is good)
+ - ability to read/write all the registers on the device
+ - read valid ADC values from device
+
+User-space application that uses your driver to:
+ - read ADC values
+ - read register values
+ - change ADC channels
+
+evaluated based on:
+1. Communication
+2. Documentation
+3. Code Cleanliness
+4. Code Deployment
+5. Testing
