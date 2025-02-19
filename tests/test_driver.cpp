@@ -7,14 +7,19 @@
 
 TEST(DeviceDriverTests, test_init)
 {
+  const uint8_t ADS114S08_DEVICE_ID = 0x04;
+  const uint8_t ADS114S08_NUM_CHANNELS = 12;
+
   SpiEmulator spi;
   DeviceDriver driver(spi);
 
   ASSERT_EQ(0, driver.get_device_id());
+  ASSERT_EQ(0, driver.get_num_channels());
 
   driver.initialize();
 
-  ASSERT_NE(0, driver.get_device_id());
+  ASSERT_EQ(ADS114S08_DEVICE_ID, driver.get_device_id());
+  ASSERT_EQ(ADS114S08_NUM_CHANNELS, driver.get_num_channels());
 }
 
 
