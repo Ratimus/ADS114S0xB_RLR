@@ -1,6 +1,26 @@
-# ADS114S0xB Device Driver for Embedded Platforms by Ryan Richardson (aka `Ratimus`)
+# ADS114S0xB Device Driver for Embedded Platforms
 
-This project demonstrates the general approach to developing a device driver for embedded platforms, allowing the microcontroller to communicate with and control an ADS114S0xB Analog-to-Digital Converter (ADC) via the Serial Peripheral Interface (SPI).
+Author: Ryan Richardson
+
+This project focuses on developing a device driver for the ADS114S0xB Analog-to-Digital Converter (ADC) and includes a software emulation of the hardware components. Instead of interacting with physical hardware, the project emulates both the ADC and the SPI controller/bus, enabling thorough testing and validation. The driver communicates with the SPI bus using an abstract SPI controller interface, making it easy to switch to a hardware platform with minimal changes to the driver as long as the hardware controller implements the same interface. The project includes the hardware emulations, a bare-metal driver, a user-space application, and automated tests to verify functionality before proceeding with hardware integration.
+
+## Objectives
+
+The primary objective of this project was to design and implement a device driver for the ADS114S0xB Delta-Sigma ADC, with the following key goals:
+
+Device Driver Implementation:
+- Develop a bare-metal driver capable of initializing the device, performing SPI read and write operations, and interacting with all device registers.
+
+ADC Functionality:
+- Ensure the driver can correctly read ADC values and change ADC channels as specified in the datasheet.
+
+User-Space Application: Create a user-space application that communicates with the driver to:
+- Retrieve ADC values
+- Read and modify register values
+- Select different ADC channels
+
+Software Emulation: 
+- Since this project does not involve physical hardware, all interactions with the ADS114S0xB are simulated via software. The emulation includes both the ADC itself and the SPI bus and controller, enabling validation of driver functionality in the absence of hardware.
 
 ## Project Structure
 
@@ -18,7 +38,7 @@ User-space application that uses the driver to:
 - Change ADC channels
 
 ### `/tests`
-Automated tests using the GoogleTest framework and built using the CTest facility provided by CMake
+Automated tests using the GoogleTest framework, built using the CTest facility provided by CMake.
 
 ## Building and Running the Project
 
@@ -29,7 +49,7 @@ Automated tests using the GoogleTest framework and built using the CTest facilit
 - GCC compiler
 - Git
 
-The following instructions are for Ubuntu (including Ubuntu under WSL). If you're using another distro or Windows stand-alone, use the equivalent commands for your OS. Feel free to skip any of the steps in part 1 if you already have CMake and/or git set up on your machine.
+The following instructions are for Ubuntu (including Ubuntu under WSL). If you're using another distro or Windows standalone, use the equivalent commands for your OS. Feel free to skip any of the steps in part 1 if you already have CMake and/or git set up on your machine.
 
 ### Step 1: Set Up Your Build Environment
 
@@ -44,7 +64,7 @@ Install git:
 $ sudo apt-get install git
 ```
 
-If the previous step fails, you might need to tell your OS how to find git using the following command and then trying that step again:
+If the previous step fails, you might need to tell your OS how to find git using the following command and then try that step again:
 ```bash
 $ sudo add-apt-repository ppa:git-core/ppa -y && sudo apt-get update && sudo apt-get upgrade && sudo apt-get install git -y
 ```
@@ -82,7 +102,7 @@ $ app/app
 ```
 
 Run all tests:
-```
+```bash
 $ ctest
 ```
 
@@ -97,7 +117,9 @@ And so, we finally get to the `DeviceDriver` class itself. This was the easiest 
 
 The application consists of a simple function that runs once and then exits. This function instantiates an object of the `SpiEmulator` class and passes it to the `DeviceDriver` constructor and then excercises various `DeviceDriver` functions.
 
+
 ## Testing
+
 ### The app itself verifies the basic functionality of the device driver by performing the following actions:
 - Calls `DeviceDriver::initialize()`, which in turn initializes the SPI bus and the ADC IC
 - Calls `DeviceDriver::read_adc_by_rdata_cmd()` for each ADC channel, which sets `CS` low, writes data to the `INPMUX` register such that the desired channel is the source of sampled data, sends the `RDATA` command to initiate sending data from the ADC, and then reads back two bytes corresponding to the raw value from the IC (and sets `CS` high again)
@@ -108,40 +130,40 @@ The application consists of a simple function that runs once and then exits. Thi
 ### GoogleTest framework: SpiEmulator - test_spi.cpp:
 
 `TEST(SPITests, Send123)`
-- tests (simulated) writing a value to the SPI bus by calling SpiEmulator::write() for a single value and then checking the internal buffer to verify the value was written correctly
+- Tests (simulated) writing a value to the SPI bus by calling SpiEmulator::write() for a single value and then checking the internal buffer to verify the value was written correctly
 
 `TEST(SPITests, SendWalkingBit)`
-- is similar to the previous test, except that 0b00000001 is written, followed by 0b00000010, etc.
+- Is similar to the previous test, except that 0b00000001 is written, followed by 0b00000010, etc.
 
 `TEST(SPITests, SendWalkingZero)`
-- is similar to the previous test, except that 0b11111110 is written, followed by 0b11111101, etc.
+- Is similar to the previous test, except that 0b11111110 is written, followed by 0b11111101, etc.
 
 `TEST(SPITests, Receive123)`
-- tests (simulated) receiving a value from the SPI bus by forcing a single value into the receive buffer via a pointer and then verifying the same value is received by a call to SpiEmulator::read()
+- Tests (simulated) receiving a value from the SPI bus by forcing a single value into the receive buffer via a pointer and then verifying the same value is received by a call to SpiEmulator::read()
 
 `TEST(SPITests, ReceiveWalkingBit)`
-- is similar to the previous test, except that 0b00000001 is expected, followed by 0b00000010, etc.
+- Is similar to the previous test, except that 0b00000001 is expected, followed by 0b00000010, etc.
 
 `TEST(SPITests, ReceiveWalkingZero)`
-- is similar to the previous test, except that 0b11111110 is expected, followed by 0b11111101, etc.
+- Is similar to the previous test, except that 0b11111110 is expected, followed by 0b11111101, etc.
 
 `TEST(SPITests, LoopBack)`
-- simulates writing 255 to the bus, then writing all the numbers from 0 to 255. The output is "looped back" to the input, so that value of each read() should be the same value written by test_loopback() on the previous cycle
+- Simulates writing 255 to the bus, then writing all the numbers from 0 to 255. The output is "looped back" to the input, so that value of each `read()` should be the same value written by test_loopback() on the previous cycle
 
 ### GoogleTest framework: DeviceDriver - test_driver.cpp
 
 `TEST(DeviceDriverTests, test_init)`
-- instantiates device driver, verifies device_id and number of channels are both 0. Initializes driver and verifies device_id is as expected in accordance with the datasheet and that the number of channels reported is correct for the device
+- Instantiates device driver, verifies device_id and number of channels are both 0. Initializes driver and verifies device_id is as expected in accordance with the datasheet and that the number of channels reported is correct for the device
 
 `TEST(DeviceDriverTests, test_read_and_write_reg)`
-- writes a randomly-generated uint8_t to each register and then goes back through each register to confirm the value stored is equal to the value that was written. NOTE: ADC emulator does not currently simulate read-only register values, so this test would need to be updated to run on actual hardware or if read-only registers are implemented in the emulator
+- Writes a randomly-generated uint8_t to each register and then goes back through each register to confirm the value stored is equal to the value that was written. NOTE: ADC emulator does not currently simulate read-only register values, so this test would need to be updated to run on actual hardware or if read-only registers are implemented in the emulator
 
 `TEST(DeviceDriverTests, test_set_channel_and_read)`
-- cycles through all available ADC channels in non-consecutive order and stores the recorded values (which are randomly generated by the ADC emulator upon simulated reset). The channels are again cycled through, this time in a different order, and the same values recorded during the previous cycle are expected. If this test were to be implemented in hardware, constant voltage sources would be used instead of randomly-generated values and it would be unreasonable to expect the exact same values, so range-based expected values would need to be implemented in the test
+- Cycles through all available ADC channels in non-consecutive order and stores the recorded values (which are randomly generated by the ADC emulator upon simulated reset). The channels are again cycled through, this time in a different order, and the same values recorded during the previous cycle are expected. If this test were to be implemented in hardware, constant voltage sources would be used instead of randomly-generated values and it would be unreasonable to expect the exact same values, so range-based expected values would need to be implemented in the test
 
 ## Potential next steps:
-- Choose a hardware platform and get GPIO working for the relevent pins
-- Create or obtain/adapt code for a hardware SPI controller on the chosen platform that implements the ISpiInterface
+- Choose a hardware platform and get GPIO working for the relevant pins
+- Create or obtain/adapt code for a hardware SPI controller on the chosen platform that implements the `ISpiInterface`
 - Calibrate the ADC, store calibration data, set ADC gain via appropriate register values, and use this information to read actual voltages
-- Optionally, implement multi-threaded, continuous ADC reads using direct_read_adc_task() and a Real-Time Operating System (RTOS)
+- Optionally, implement multi-threaded, continuous ADC reads using `direct_read_adc_task()` and a Real-Time Operating System (RTOS)
 - Improve automated test coverage, potentially incorporate the software into a Hardware In The Loop test setup, attach automated testing (on hardware and software) to CI/CD pipeline so that new pull requests are regression-tested before being pushed into main
