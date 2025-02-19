@@ -1,0 +1,99 @@
+Waiting for ADC RDY bit to go low
+.
+.
+.
+---------------------------
+IN+ = 0, IN- = GND, raw adc value = 0x2D5A
+APP received 0x2D5A from ADC
+
+IN+ = 1, IN- = GND, raw adc value = 0x5ABB
+APP received 0x5ABB from ADC
+
+IN+ = 2, IN- = GND, raw adc value = 0xB57D
+APP received 0xB57D from ADC
+
+IN+ = 3, IN- = GND, raw adc value = 0x6B02
+APP received 0x6B02 from ADC
+
+IN+ = 4, IN- = GND, raw adc value = 0xD60B
+APP received 0xD60B from ADC
+
+IN+ = 5, IN- = GND, raw adc value = 0xAC1E
+APP received 0xAC1E from ADC
+
+IN+ = 6, IN- = GND, raw adc value = 0x5844
+APP received 0x5844 from ADC
+
+IN+ = 7, IN- = GND, raw adc value = 0xB08F
+APP received 0xB08F from ADC
+
+IN+ = 8, IN- = GND, raw adc value = 0x6126
+APP received 0x6126 from ADC
+
+IN+ = 9, IN- = GND, raw adc value = 0xC253
+APP received 0xC253 from ADC
+
+IN+ = 10, IN- = GND, raw adc value = 0x84AE
+APP received 0x84AE from ADC
+
+IN+ = 11, IN- = GND, raw adc value = 0x0964
+APP received 0x0964 from ADC
+
+---------------------------
+APP received 0x0004 from ADC register 0
+APP received 0x0000 from ADC register 1
+APP received 0x00BC from ADC register 2
+APP received 0x0000 from ADC register 3
+APP received 0x0014 from ADC register 4
+APP received 0x0010 from ADC register 5
+APP received 0x0000 from ADC register 6
+APP received 0x00FF from ADC register 7
+APP received 0x0000 from ADC register 8
+APP received 0x0010 from ADC register 9
+APP received 0x0000 from ADC register 10
+APP received 0x0000 from ADC register 11
+APP received 0x0000 from ADC register 12
+APP received 0x0000 from ADC register 13
+APP received 0x0000 from ADC register 14
+APP received 0x0040 from ADC register 15
+APP received 0x0000 from ADC register 16
+APP received 0x0000 from ADC register 17
+---------------------------
+App wrote 0x0000 to ADC register 0
+App wrote 0x0001 to ADC register 1
+App wrote 0x0011 to ADC register 17
+App wrote 0x0002 to ADC register 2
+App wrote 0x0004 to ADC register 4
+App wrote 0x000B to ADC register 11
+App wrote 0x0006 to ADC register 6
+App wrote 0x0008 to ADC register 8
+App wrote 0x000E to ADC register 14
+App wrote 0x0005 to ADC register 5
+App wrote 0x000A to ADC register 10
+App wrote 0x0009 to ADC register 9
+App wrote 0x0003 to ADC register 3
+App wrote 0x000D to ADC register 13
+App wrote 0x0007 to ADC register 7
+App wrote 0x000F to ADC register 15
+App wrote 0x000C to ADC register 12
+App wrote 0x0010 to ADC register 16
+---------------------------
+APP received 0x0011 from ADC register 17
+APP received 0x0002 from ADC register 2
+APP received 0x0001 from ADC register 1
+APP received 0x000F from ADC register 15
+APP received 0x000C from ADC register 12
+APP received 0x0000 from ADC register 0
+APP received 0x0004 from ADC register 4
+APP received 0x0005 from ADC register 5
+APP received 0x000A from ADC register 10
+APP received 0x0009 from ADC register 9
+APP received 0x0003 from ADC register 3
+APP received 0x000E from ADC register 14
+APP received 0x0010 from ADC register 16
+APP received 0x000D from ADC register 13
+APP received 0x0007 from ADC register 7
+APP received 0x000B from ADC register 11
+APP received 0x0006 from ADC register 6
+APP received 0x0008 from ADC register 8
+---------------------------
