@@ -105,8 +105,7 @@ The application consists of a simple function that runs once and then exits. Thi
 - Calls `DeviceDriver::write_register()` for each register, writing each register's own number into it for ease of verification. NOTE: read-only behavior of the actual IC is not modeled by the emulator, so all previous values are overwritten
 - Calls `DeviceDriver::read_register()` again for each register, verifying the previous contents have been replaced with the new values.
 
-### GoogleTest framework:
-SpiEmulator - test_spi.cpp:
+### GoogleTest framework: SpiEmulator - test_spi.cpp:
 
 `TEST(SPITests, Send123)`
 - tests (simulated) writing a value to the SPI bus by calling SpiEmulator::write() for a single value and then checking the internal buffer to verify the value was written correctly
@@ -129,7 +128,8 @@ SpiEmulator - test_spi.cpp:
 `TEST(SPITests, LoopBack)`
 - simulates writing 255 to the bus, then writing all the numbers from 0 to 255. The output is "looped back" to the input, so that value of each read() should be the same value written by test_loopback() on the previous cycle
 
-DeviceDriver - test_driver.cpp
+### GoogleTest framework: DeviceDriver - test_driver.cpp
+
 `TEST(DeviceDriverTests, test_init)`
 - instantiates device driver, verifies device_id and number of channels are both 0. Initilizes initializes driver, and verifies device_id is as expected in accordance with the datasheet and that the number of channels reported is correct for the device
 
