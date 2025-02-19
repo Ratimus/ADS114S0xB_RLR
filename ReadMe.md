@@ -18,7 +18,7 @@ User-space application that uses the driver to:
 - Change ADC channels
 
 ### `/tests`
-Automated testing
+Automated tests using the GoogleTest framework and built using the CTest facility provided by CMake
 
 ## Building and Running the Project
 
@@ -106,8 +106,28 @@ The application consists of a simple function that runs once and then exits. Thi
 - Calls `DeviceDriver::read_register()` again for each register, verifying the previous contents have been replaced with the new values.
 
 ### GoogleTest framework:
-TODO
+SpiEmulator - test_spi.cpp:
 
+`TEST(SPITests, Send123)`
+- tests (simulated) writing a value to the SPI bus by calling SpiEmulator::write() for a single value and then checking the internal buffer to verify the value was written correctly
+
+`TEST(SPITests, SendWalkingBit)`
+- is similar to the previous test, except that 0b00000001 is written, followed by 0b00000010, etc.
+
+`TEST(SPITests, SendWalkingZero)`
+- is similar to the previous test, except that 0b11111110 is written, followed by 0b11111101, etc.
+
+`TEST(SPITests, Receive123)`
+- tests (simulated) receiving a value from the SPI bus by forcing a single value into the receive buffer via a pointer and then verifying the same value is received by a call to SpiEmulator::read()
+
+`TEST(SPITests, ReceiveWalkingBit)`
+- is similar to the previous test, except that 0b00000001 is expected, followed by 0b00000010, etc.
+
+`TEST(SPITests, ReceiveWalkingZero)`
+- is similar to the previous test, except that 0b11111110 is expected, followed by 0b11111101, etc.
+
+`TEST(SPITests, LoopBack)`
+- simulates writing 255 to the bus, then writing all the numbers from 0 to 255. The output is "looped back" to the input, so that value of each read() should be the same value written by test_loopback() on the previous cycle
 
 ## Potential next steps:
 - Choose a hardware platform and get GPIO working for the relevent pins
