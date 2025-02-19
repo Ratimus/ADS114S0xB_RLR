@@ -66,7 +66,8 @@ TEST(DeviceDriverTests, test_read_and_write_reg)
   for (uint8_t reg_addr = 0; reg_addr < driver.NUM_REGISTERS; ++reg_addr)
   {
     const uint8_t ex = expected[reg_addr];
-    ASSERT_EQ(ex, driver.read_register(reg_addr));
+    const uint8_t re = driver.read_register(reg_addr);
+    ASSERT_EQ(ex, re);
   }
 }
 
