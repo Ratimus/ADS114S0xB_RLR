@@ -1,3 +1,9 @@
+// /app/main.cpp
+//
+// Application to excercise the ADS114S08 device driver:
+//   - changes ADC channels
+//   - reads ADC values
+//   - reads and writes register values
 #include "spi_emulator.h"
 #include "device_driver.h"
 
@@ -50,15 +56,8 @@ void write_register(DeviceDriver& adc, uint8_t addr, uint8_t write_val)
 }
 
 
-// User-space application that uses your driver
-//   read ADC values
-//   - driver.read_adc_by_rdata_cmd()
-//
-//   read register values
-//   change ADC channels
 int main()
 {
-  // HardwareSpi spi;
   SpiEmulator spi;
   DeviceDriver driver(spi);
 

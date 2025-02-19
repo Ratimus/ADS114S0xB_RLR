@@ -26,14 +26,15 @@ class DeviceDriver
 {
   ISpiInterface& spi;
   uint8_t num_channels;
+  uint8_t device_id;
 
 public:
 
   inline static const uint8_t NUM_REGISTERS = 18;
-
   DeviceDriver(ISpiInterface& spiInterface);
   ~DeviceDriver() = default;
 
+  uint8_t   get_device_id(void);
   uint8_t   get_num_channels(void);
 
   void      reset(void);

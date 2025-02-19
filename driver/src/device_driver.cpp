@@ -27,7 +27,8 @@ void delay_nanos(long nanoseconds)
 // in order to wait 2.2 mS before proceeding when you first power up
 DeviceDriver::DeviceDriver(ISpiInterface& spiInterface):
   spi(spiInterface),
-  num_channels(0)
+  num_channels(0),
+  device_id(0)
 {
   delay_nanos(static_cast<long>(2.2f * ADS114S08_TIMING::nS_TO_mS));
 }
@@ -61,7 +62,7 @@ void DeviceDriver::initialize()
   // DeviceDriver::get_active_channel() might use cached_registers[ADS114S08_REGISTERS::INPMUX],
   // and you might have a function like DeviceDriver::update_cache() that would refresh the cache
 
-  uint8_t device_id = read_register(ADS114S08_REGISTERS::ID);
+  device_id = read_register(ADS114S08_REGISTERS::ID);
   device_id &= 0x07;
   switch(device_id)
   {
@@ -90,6 +91,11 @@ uint8_t DeviceDriver::get_num_channels(void)
   return num_channels;
 }
 
+
+uint8_t DeviceDriver::get_device_id(void)
+{
+  return device_id;
+}
 
 // Configure input MUX - see datasheet p. 73
 // For single-ended reads, set ch_minus to Analog Common (default)

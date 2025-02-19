@@ -24,6 +24,27 @@ public:
   virtual void    write(uint8_t data) override;
   virtual uint8_t read(void) override;
 
+
+  ////////////////////////// WARNING ////////////////////////
+  // The following functions should never make their way into production code;
+  // they are solely for testing the interface of the simulated SPI bus
+  void test_loopback(uint8_t test_val)
+  {
+    fake_cipo_buffer = fake_copi_buffer;
+    fake_copi_buffer = test_val;
+  }
+
+  uint8_t *get_pCopi()
+  {
+    return &fake_copi_buffer;
+  }
+
+  uint8_t *get_pCipo()
+  {
+    return &fake_cipo_buffer;
+  }
+  ///////////////////// END OF WARNING /////////////////////
+
 private:
 
   ADS114S08_Emulator adc;
