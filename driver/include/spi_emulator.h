@@ -5,6 +5,7 @@
 #include <cstdint>
 
 #include "i_spi_interface.h"
+#include "device_driver.h"
 #include "adc_emulator.h"
 
 class SpiEmulator : public ISpiInterface
@@ -17,6 +18,7 @@ class SpiEmulator : public ISpiInterface
 public:
 
   SpiEmulator();
+  SpiEmulator(bool simulate_startup_delay);
   ~SpiEmulator() = default;
 
   virtual void    init(uint8_t SPI_mode) override;
@@ -43,11 +45,17 @@ public:
   {
     return &fake_cipo_buffer;
   }
+
+  uint16_t get_raw_adc_test_val(uint8_t idx)
+  {
+    return adc.get_raw_adc_test_val(idx);
+  }
   ///////////////////// END OF WARNING /////////////////////
 
 private:
 
   ADS114S08_Emulator adc;
+  friend uint16_t read_adc_channel(DeviceDriver& adc, uint8_t ch);
 };
 
 

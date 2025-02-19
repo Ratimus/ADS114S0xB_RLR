@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "spi_emulator.h"
 
+
+// Tests (simulated) writing a value to the SPI bus by calling SpiEmulator::write() for a single value and then checking the internal buffer to verify the value was written correctly
 TEST(SPITests, Send123)
 {
   SpiEmulator spi;
@@ -10,6 +12,7 @@ TEST(SPITests, Send123)
 }
 
 
+// Similar to the previous test, except that 0b00000001 is written, followed by 0b00000010, etc.
 TEST(SPITests, SendWalkingBit)
 {
   SpiEmulator spi;
@@ -24,6 +27,7 @@ TEST(SPITests, SendWalkingBit)
 }
 
 
+// Similar to the previous test, except that 0b11111110 is written, followed by 0b11111101, etc.
 TEST(SPITests, SendWalkingZero)
 {
   SpiEmulator spi;
@@ -38,6 +42,7 @@ TEST(SPITests, SendWalkingZero)
 }
 
 
+// Tests (simulated) receiving a value from the SPI bus by forcing a single value into the receive buffer via a pointer and then verifying the same value is received by a call to SpiEmulator::read()
 TEST(SPITests, Receive123)
 {
   SpiEmulator spi;
@@ -46,6 +51,7 @@ TEST(SPITests, Receive123)
 }
 
 
+// Similar to the previous test, except that 0b00000001 is expected, followed by 0b00000010, etc.
 TEST(SPITests, ReceiveWalkingBit)
 {
   SpiEmulator spi;
@@ -57,6 +63,7 @@ TEST(SPITests, ReceiveWalkingBit)
 }
 
 
+// Similar to the previous test, except that 0b11111110 is expected, followed by 0b11111101, etc.
 TEST(SPITests, ReceiveWalkingZero)
 {
   SpiEmulator spi;
@@ -68,6 +75,7 @@ TEST(SPITests, ReceiveWalkingZero)
 }
 
 
+// Simulates writing 255 to the bus, then writing all the numbers from 0 to 255. The output is "looped back" to the input, so that value of each read() should be the same value written by test_loopback() on the previous cycle
 TEST(SPITests, LoopBack)
 {
   SpiEmulator spi;

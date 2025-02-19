@@ -12,6 +12,11 @@ SpiEmulator::SpiEmulator():
 { ; }
 
 
+SpiEmulator::SpiEmulator(bool simulate_startup_delay):
+  adc(&fake_copi_buffer, &fake_cipo_buffer, simulate_startup_delay)
+{ ; }
+
+
 // For simulation, just set the Clock Phase and Clock Polarity - see datasheet p. 88
 void SpiEmulator::init(uint8_t SPI_mode)
 {
@@ -24,7 +29,8 @@ void SpiEmulator::init(uint8_t SPI_mode)
 // Simulate full-duplex by clocking out a byte of data and returning the value clocked in
 uint8_t SpiEmulator::transfer(uint8_t data)
 {
-  write(data);
+  fake_copi_buffer = data;
+  adc.simulate_op();
   return read();
 }
 
@@ -32,15 +38,12 @@ uint8_t SpiEmulator::transfer(uint8_t data)
 // Simulate clocking out a byte of data and then tell the emulated ADC to simulate 8 clock cycles
 void SpiEmulator::write(uint8_t data)
 {
-  fake_copi_buffer = data;
-  // std::cout << "sim spi wrote " << static_cast<uint16_t>(fake_copi_buffer) << std::endl;
-  adc.simulate_op();
+  transfer(data);
 }
 
 // Simulate clocking in a byte of data
 uint8_t SpiEmulator::read(void)
 {
-  // std::cout << "sim spi read " << static_cast<uint16_t>(fake_cipo_buffer) << "\n" <<  std::endl;
   return fake_cipo_buffer;
 }
 

@@ -131,7 +131,7 @@ The application consists of a simple function that runs once and then exits. Thi
 ### GoogleTest framework: DeviceDriver - test_driver.cpp
 
 `TEST(DeviceDriverTests, test_init)`
-- instantiates device driver, verifies device_id and number of channels are both 0. Initilizes initializes driver, and verifies device_id is as expected in accordance with the datasheet and that the number of channels reported is correct for the device
+- instantiates device driver, verifies device_id and number of channels are both 0. Initializes driver and verifies device_id is as expected in accordance with the datasheet and that the number of channels reported is correct for the device
 
 `TEST(DeviceDriverTests, test_read_and_write_reg)`
 - writes a randomly-generated uint8_t to each register and then goes back through each register to confirm the value stored is equal to the value that was written. NOTE: ADC emulator does not currently simulate read-only register values, so this test would need to be updated to run on actual hardware or if read-only registers are implemented in the emulator

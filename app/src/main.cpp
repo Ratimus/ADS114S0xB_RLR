@@ -17,14 +17,17 @@ void print_hex(uint16_t val)
 }
 
 
-uint16_t read_adc_channel(DeviceDriver& adc, uint8_t ch)
+uint16_t read_adc_channel(DeviceDriver& adc, uint8_t ch, SpiEmulator spi)
 {
   adc.set_channel(ch);
   uint16_t value = adc.read_adc_by_rdata_cmd();
 
-  std::cout << "APP received ";
+  std::cout << "APP reading ADC channel " << (int)ch;
+  std::cout << "... Expected: ";
+  print_hex(spi.get_raw_adc_test_val(ch));
+  std::cout << " | Received: ";
   print_hex(value);
-  std::cout << " from ADC\n" << std::endl;
+  std::cout << std::endl;
 
   return value;
 }
@@ -52,13 +55,12 @@ void write_register(DeviceDriver& adc, uint8_t addr, uint8_t write_val)
   std::cout << "App wrote ";
   print_hex(value);
   std::cout << " to ADC register " << static_cast<uint16_t>(value) << std::endl;
-
 }
 
 
 int main()
 {
-  SpiEmulator spi;
+  SpiEmulator spi(1);
   DeviceDriver driver(spi);
 
   driver.initialize();
@@ -67,7 +69,7 @@ int main()
 
   for (auto adc_channel = 0; adc_channel < driver.get_num_channels(); ++adc_channel)
   {
-    read_adc_channel(driver, adc_channel);
+    read_adc_channel(driver, adc_channel, spi);
   }
 
   std::cout << "---------------------------" << std::endl;

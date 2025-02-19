@@ -1,73 +1,70 @@
-Start testing: Feb 18 17:19 MST
+Start testing: Feb 18 23:19 MST
 ----------------------------------------------------------
 1/2 Testing: TestDeviceDriver
 1/2 Test: TestDeviceDriver
-Command: "/mnt/c/Users/12067/Documents/vscode/ADS114S0xB_RLR/build/tests/test_driver"
-Directory: /mnt/c/Users/12067/Documents/vscode/ADS114S0xB_RLR/build/tests
-"TestDeviceDriver" start time: Feb 18 17:19 MST
+Command: "/home/rrichard/repos/ADS114S0xB_RLR/build/tests/test_driver"
+Directory: /home/rrichard/repos/ADS114S0xB_RLR/build/tests
+"TestDeviceDriver" start time: Feb 18 23:19 MST
 Output:
 ----------------------------------------------------------
-Running main() from /mnt/c/Users/12067/Documents/vscode/ADS114S0xB_RLR/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Running main() from /home/rrichard/repos/ADS114S0xB_RLR/build/_deps/googletest-src/googletest/src/gtest_main.cc
 [==========] Running 3 tests from 1 test suite.
 [----------] Global test environment set-up.
 [----------] 3 tests from DeviceDriverTests
 [ RUN      ] DeviceDriverTests.test_init
 Waiting for ADC RDY bit to go low
-.
-.
-.
-[       OK ] DeviceDriverTests.test_init (4079 ms)
+[       OK ] DeviceDriverTests.test_init (0 ms)
 [ RUN      ] DeviceDriverTests.test_set_channel_and_read
 Waiting for ADC RDY bit to go low
-IN+ = 0, IN- = GND, raw adc value = 0x12CF
-IN+ = 1, IN- = GND, raw adc value = 0x25A5
-IN+ = 2, IN- = GND, raw adc value = 0x4B51
-IN+ = 4, IN- = GND, raw adc value = 0x2D5A
-IN+ = 11, IN- = GND, raw adc value = 0xB08F
-IN+ = 6, IN- = GND, raw adc value = 0xB57D
-IN+ = 8, IN- = GND, raw adc value = 0xD60B
-IN+ = 5, IN- = GND, raw adc value = 0x5ABB
-IN+ = 10, IN- = GND, raw adc value = 0x5844
-IN+ = 9, IN- = GND, raw adc value = 0xAC1E
-IN+ = 3, IN- = GND, raw adc value = 0x96A9
-IN+ = 7, IN- = GND, raw adc value = 0x6B02
-IN+ = 2, IN- = GND, raw adc value = 0x4B51
-IN+ = 1, IN- = GND, raw adc value = 0x25A5
-IN+ = 0, IN- = GND, raw adc value = 0x12CF
-IN+ = 4, IN- = GND, raw adc value = 0x2D5A
-IN+ = 5, IN- = GND, raw adc value = 0x5ABB
-IN+ = 10, IN- = GND, raw adc value = 0x5844
-IN+ = 9, IN- = GND, raw adc value = 0xAC1E
-IN+ = 3, IN- = GND, raw adc value = 0x96A9
-IN+ = 7, IN- = GND, raw adc value = 0x6B02
-IN+ = 11, IN- = GND, raw adc value = 0xB08F
-IN+ = 6, IN- = GND, raw adc value = 0xB57D
-IN+ = 8, IN- = GND, raw adc value = 0xD60B
+IN+ = 0, IN- = GND
+IN+ = 1, IN- = GND
+IN+ = 2, IN- = GND
+IN+ = 4, IN- = GND
+IN+ = 11, IN- = GND
+IN+ = 6, IN- = GND
+IN+ = 8, IN- = GND
+IN+ = 5, IN- = GND
+IN+ = 10, IN- = GND
+IN+ = 9, IN- = GND
+IN+ = 3, IN- = GND
+IN+ = 7, IN- = GND
+IN+ = 2, IN- = GND
+IN+ = 1, IN- = GND
+IN+ = 0, IN- = GND
+IN+ = 4, IN- = GND
+IN+ = 5, IN- = GND
+IN+ = 10, IN- = GND
+IN+ = 9, IN- = GND
+IN+ = 3, IN- = GND
+IN+ = 7, IN- = GND
+IN+ = 11, IN- = GND
+IN+ = 6, IN- = GND
+IN+ = 8, IN- = GND
 [       OK ] DeviceDriverTests.test_set_channel_and_read (0 ms)
 [ RUN      ] DeviceDriverTests.test_read_and_write_reg
 Waiting for ADC RDY bit to go low
 [       OK ] DeviceDriverTests.test_read_and_write_reg (1 ms)
-[----------] 3 tests from DeviceDriverTests (4082 ms total)
+[----------] 3 tests from DeviceDriverTests (1 ms total)
 
 [----------] Global test environment tear-down
-[==========] 3 tests from 1 test suite ran. (4082 ms total)
+[==========] 3 tests from 1 test suite ran. (1 ms total)
 [  PASSED  ] 3 tests.
 <end of output>
-Test time =   4.11 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"TestDeviceDriver" end time: Feb 18 17:19 MST
-"TestDeviceDriver" time elapsed: 00:00:04
+"TestDeviceDriver" end time: Feb 18 23:19 MST
+"TestDeviceDriver" time elapsed: 00:00:00
 ----------------------------------------------------------
 
 2/2 Testing: TestSPI
 2/2 Test: TestSPI
-Command: "/mnt/c/Users/12067/Documents/vscode/ADS114S0xB_RLR/build/tests/test_spi"
-Directory: /mnt/c/Users/12067/Documents/vscode/ADS114S0xB_RLR/build/tests
-"TestSPI" start time: Feb 18 17:19 MST
+Command: "/home/rrichard/repos/ADS114S0xB_RLR/build/tests/test_spi"
+Directory: /home/rrichard/repos/ADS114S0xB_RLR/build/tests
+"TestSPI" start time: Feb 18 23:19 MST
 Output:
 ----------------------------------------------------------
-Running main() from /mnt/c/Users/12067/Documents/vscode/ADS114S0xB_RLR/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Running main() from /home/rrichard/repos/ADS114S0xB_RLR/build/_deps/googletest-src/googletest/src/gtest_main.cc
 [==========] Running 7 tests from 1 test suite.
 [----------] Global test environment set-up.
 [----------] 7 tests from SPITests
@@ -91,11 +88,11 @@ Running main() from /mnt/c/Users/12067/Documents/vscode/ADS114S0xB_RLR/build/_de
 [==========] 7 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 7 tests.
 <end of output>
-Test time =   0.02 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"TestSPI" end time: Feb 18 17:19 MST
+"TestSPI" end time: Feb 18 23:19 MST
 "TestSPI" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Feb 18 17:19 MST
+End testing: Feb 18 23:19 MST
