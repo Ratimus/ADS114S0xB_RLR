@@ -40,6 +40,9 @@ User-space application that uses the driver to:
 ### `/tests`
 Automated tests using the GoogleTest framework, built using the CTest facility provided by CMake.
 
+### `/doc`
+Datataheets, test results, developer's notes, etc.
+
 ## Building and Running the Project
 
 ### Prerequisites:
