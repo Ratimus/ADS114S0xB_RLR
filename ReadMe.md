@@ -127,7 +127,7 @@ The application consists of a simple function that runs once and then exits. Thi
 - Calls `DeviceDriver::initialize()`, which in turn initializes the SPI bus and the ADC IC
 - Calls `DeviceDriver::read_adc_by_rdata_cmd()` for each ADC channel, which sets `CS` low, writes data to the `INPMUX` register such that the desired channel is the source of sampled data, sends the `RDATA` command to initiate sending data from the ADC, and then reads back two bytes corresponding to the raw value from the IC (and sets `CS` high again)
 - Calls `DeviceDriver::read_register()` for each register present on the ADC, collecting the default values present in the registers after a reset
-- Calls `DeviceDriver::write_register()` for each register, writing random numbers into each register. NOTE: read-only behavior of the actual IC is not modeled by the emulator, so all previous values are overwritten
+- Calls `DeviceDriver::write_register()` for each register, writing each register's own index number into it for later verification. NOTE: read-only behavior of the actual IC is not modeled by the emulator, so all previous values are overwritten
 - Calls `DeviceDriver::read_register()` again for each register, demonstrating that the previous contents have been replaced with the new values.
 
 ### GoogleTest framework: SpiEmulator - test_spi.cpp:
