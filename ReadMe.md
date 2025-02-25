@@ -59,7 +59,7 @@ The following instructions are for Ubuntu (including Ubuntu under WSL). If you'r
 Install CMake, the GCC compiler, and other required tools:
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install build-essential
+$ sudo apt-get install cmake build-essential
 ```
 
 Install git:
