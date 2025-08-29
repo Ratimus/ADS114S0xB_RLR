@@ -1,32 +1,24 @@
 #include "adc_emulator.h"
 #include "adc_constants.h"
 #include <array>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
-
-ADS114S08_Emulator::ADS114S08_Emulator(uint8_t * const copi,
-                                       uint8_t * const cipo,
-                                       bool simulate_startup_delay):
-  simulate_startup_delay(simulate_startup_delay),
-  COPI(copi),
-  CIPO(cipo)
+ADS114S08_Emulator::ADS114S08_Emulator(uint8_t *const copi, uint8_t *const cipo, bool simulate_startup_delay)
+    : simulate_startup_delay(simulate_startup_delay), COPI(copi), CIPO(cipo)
 {
   reset();
 }
-
 
 uint8_t ADS114S08_Emulator::simulate_spi_read(void)
 {
   return *COPI;
 }
 
-
 void ADS114S08_Emulator::simulate_spi_write(uint8_t data)
 {
   *CIPO = data;
 }
-
 
 void ADS114S08_Emulator::simulate_outgoing_data(void)
 {
@@ -41,7 +33,7 @@ void ADS114S08_Emulator::simulate_outgoing_data(void)
     --read_counter;
     if (reg_pointer < registers.size())
     {
-      if (simulate_startup_delay && (reg_pointer == ADS114S08_REGISTERS::STATUS) )
+      if (simulate_startup_delay && (reg_pointer == ADS114S08_REGISTERS::STATUS))
       {
         registers[reg_pointer] |= 0x01 << 5;
         static uint8_t tries = 3;
@@ -68,7 +60,6 @@ void ADS114S08_Emulator::simulate_outgoing_data(void)
   }
 }
 
-
 void ADS114S08_Emulator::store_new_data(uint8_t data)
 {
   --write_counter;
@@ -81,11 +72,10 @@ void ADS114S08_Emulator::store_new_data(uint8_t data)
   // Nowhere to put the data, so just ignore it
 }
 
-
 void ADS114S08_Emulator::handle_two_byte_command(uint8_t data)
 {
   uint8_t read_or_write_count = (data & 0x1f) + 1;
-  bool write = (input_register & ADS114S08_CMD::WREG_1ST);
+  bool    write               = (input_register & ADS114S08_CMD::WREG_1ST);
 
   // Clear this since we've now received both CMD bytes
   input_register = 0;
@@ -101,24 +91,29 @@ void ADS114S08_Emulator::handle_two_byte_command(uint8_t data)
   }
 }
 
-
 void ADS114S08_Emulator::handle_rdata_command(void)
 {
   uint8_t  inmux_reg = registers.at(ADS114S08_REGISTERS::INPMUX);
   uint16_t pos_input = inmux_reg >> 4;
   uint16_t neg_input = inmux_reg & 0x0f;
 
-  storage_buffer     = FAKE_VOLTAGES.at(pos_input);
+  storage_buffer = FAKE_VOLTAGES.at(pos_input);
 
   std::cout << "IN+ = ";
-  if (pos_input < 12) std::cout << pos_input;
-  else if (pos_input == 12) std::cout << "GND";
-  else std::cout << "RESERVED";
+  if (pos_input < 12)
+    std::cout << pos_input;
+  else if (pos_input == 12)
+    std::cout << "GND";
+  else
+    std::cout << "RESERVED";
 
   std::cout << ", IN- = ";
-  if (neg_input < 12) std::cout << neg_input;
-  else if (neg_input == 12) std::cout << "GND";
-  else std::cout << "RESERVED";
+  if (neg_input < 12)
+    std::cout << neg_input;
+  else if (neg_input == 12)
+    std::cout << "GND";
+  else
+    std::cout << "RESERVED";
   std::cout << std::endl;
 
   // Just emulating single-ended reads for now
@@ -129,7 +124,6 @@ void ADS114S08_Emulator::handle_rdata_command(void)
   output_buffer.push_back(lsb);
   output_buffer.push_back(msb);
 }
-
 
 void ADS114S08_Emulator::simulate_op()
 {
@@ -173,7 +167,7 @@ void ADS114S08_Emulator::simulate_op()
   // Handle byte 0 of RREG or WREG command
   if ((tmp == read_cmd) || (tmp == write_cmd))
   {
-    reg_pointer = (data & 0x1f);
+    reg_pointer    = (data & 0x1f);
     input_register = data;
     return;
   }
@@ -181,14 +175,13 @@ void ADS114S08_Emulator::simulate_op()
   // TODO: emulate responses to whatever additional commands you want
 }
 
-
 void ADS114S08_Emulator::reset()
 {
-  storage_buffer   = 0;
-  reg_pointer      = 0;
-  read_counter     = 0;
-  write_counter    = 0;
-  input_register   = 0;
+  storage_buffer = 0;
+  reg_pointer    = 0;
+  read_counter   = 0;
+  write_counter  = 0;
+  input_register = 0;
 
   while (!output_buffer.empty())
   {
@@ -197,85 +190,81 @@ void ADS114S08_Emulator::reset()
 
   // Python: all_the_addrs = [addr for addr in filter(lambda x: not x.startswith('_'), dir(ADS114S08_REGISTERS))]
   // but it's probably 300 times slower
-  uint8_t all_the_addrs[] =
-  {
-    ADS114S08_REGISTERS::ID,
-    ADS114S08_REGISTERS::STATUS,
-    ADS114S08_REGISTERS::INPMUX,
-    ADS114S08_REGISTERS::PGA,
-    ADS114S08_REGISTERS::DATARATE,
-    ADS114S08_REGISTERS::REF,
-    ADS114S08_REGISTERS::IDACMAG,
-    ADS114S08_REGISTERS::IDAC_MUX,
-    ADS114S08_REGISTERS::VBIAS,
-    ADS114S08_REGISTERS::SYS,
-    ADS114S08_REGISTERS::RESERVED0,
-    ADS114S08_REGISTERS::OFCAL0,
-    ADS114S08_REGISTERS::OFCAL1,
-    ADS114S08_REGISTERS::RESERVED1,
-    ADS114S08_REGISTERS::FSCAL0,
-    ADS114S08_REGISTERS::FSCAL1,
-    ADS114S08_REGISTERS::GPIODAT,
-    ADS114S08_REGISTERS::GPIOCON
-  };
+  uint8_t all_the_addrs[] = {ADS114S08_REGISTERS::ID,
+                             ADS114S08_REGISTERS::STATUS,
+                             ADS114S08_REGISTERS::INPMUX,
+                             ADS114S08_REGISTERS::PGA,
+                             ADS114S08_REGISTERS::DATARATE,
+                             ADS114S08_REGISTERS::REF,
+                             ADS114S08_REGISTERS::IDACMAG,
+                             ADS114S08_REGISTERS::IDAC_MUX,
+                             ADS114S08_REGISTERS::VBIAS,
+                             ADS114S08_REGISTERS::SYS,
+                             ADS114S08_REGISTERS::RESERVED0,
+                             ADS114S08_REGISTERS::OFCAL0,
+                             ADS114S08_REGISTERS::OFCAL1,
+                             ADS114S08_REGISTERS::RESERVED1,
+                             ADS114S08_REGISTERS::FSCAL0,
+                             ADS114S08_REGISTERS::FSCAL1,
+                             ADS114S08_REGISTERS::GPIODAT,
+                             ADS114S08_REGISTERS::GPIOCON};
 
   // registers.clear();
   // Defaults - see datasheet p. 70
-  for (auto addr: all_the_addrs)
+  for (auto addr : all_the_addrs)
   {
     uint8_t reg_val = 0;
-    switch(addr)
+    switch (addr)
     {
-      case ADS114S08_REGISTERS::ID:
-        reg_val = 0x04;  // ID for ADS114S08
-        break;
+    case ADS114S08_REGISTERS::ID:
+      reg_val = 0x04; // ID for ADS114S08
+      break;
 
-      case ADS114S08_REGISTERS::STATUS:
-        reg_val = 0x80;
-        break;
+    case ADS114S08_REGISTERS::STATUS:
+      reg_val = 0x80;
+      break;
 
-      case ADS114S08_REGISTERS::INPMUX:
-        reg_val = 0x01;
-        break;
+    case ADS114S08_REGISTERS::INPMUX:
+      reg_val = 0x01;
+      break;
 
-      case ADS114S08_REGISTERS::DATARATE:
-        reg_val = 0x14;
-        break;
+    case ADS114S08_REGISTERS::DATARATE:
+      reg_val = 0x14;
+      break;
 
-      case ADS114S08_REGISTERS::REF:
-        reg_val = 0x10;
-        break;
+    case ADS114S08_REGISTERS::REF:
+      reg_val = 0x10;
+      break;
 
-      case ADS114S08_REGISTERS::IDAC_MUX:
-        reg_val = 0xff;
-        break;
+    case ADS114S08_REGISTERS::IDAC_MUX:
+      reg_val = 0xff;
+      break;
 
-      case ADS114S08_REGISTERS::SYS:
-        reg_val = 0x10;
-        break;
+    case ADS114S08_REGISTERS::SYS:
+      reg_val = 0x10;
+      break;
 
-      case ADS114S08_REGISTERS::FSCAL1:
-        reg_val = 0x40;
-        break;
+    case ADS114S08_REGISTERS::FSCAL1:
+      reg_val = 0x40;
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
     registers[addr] = reg_val;
   }
 
-  for (auto& channel_reading: FAKE_VOLTAGES)
+  for (auto &channel_reading : FAKE_VOLTAGES)
   {
     channel_reading = generate_adc_value();
   }
 }
 
-
 // Just a lazy hack to generate some pseudo random-looking numbers without needing another library
 uint16_t ADS114S08_Emulator::generate_adc_value()
 {
   static uint16_t some_num = 0b1001011010101001;
-  some_num = (some_num << 1) | (some_num >> 15);
+  some_num                 = (some_num << 1) | (some_num >> 15);
   some_num += 7;
   return some_num;
 }

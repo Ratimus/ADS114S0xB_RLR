@@ -1,15 +1,13 @@
 #include <iostream>
 
+#include "adc_constants.h"
 #include "device_driver.h"
 #include "spi_emulator.h"
-#include "adc_constants.h"
-
 
 // There's going to be a register to set the GPIOs for our MCU. We'll do some bitwise operations
 // on the individual bits to set/clear individual pins. These are just for pretend.
 // For the sake of simplicity, pretend all the GPIO we care about is on the same port.
 volatile uint32_t FAKE_GPIO_REGISTER_PORT_A = 0;
-
 
 // Kills some time
 void delay_nanos(long nanoseconds)
@@ -22,13 +20,9 @@ void delay_nanos(long nanoseconds)
   }
 }
 
-
 // Given the settling time, you might want the main app to do a semtake or something
 // in order to wait 2.2 mS before proceeding when you first power up
-DeviceDriver::DeviceDriver(ISpiInterface& spiInterface):
-  spi(spiInterface),
-  num_channels(0),
-  device_id(0)
+DeviceDriver::DeviceDriver(ISpiInterface &spiInterface) : spi(spiInterface), num_channels(0), device_id(0)
 {
   delay_nanos(static_cast<long>(2.2f * ADS114S08_TIMING::nS_TO_mS));
 }
@@ -64,33 +58,31 @@ void DeviceDriver::initialize()
 
   device_id = read_register(ADS114S08_REGISTERS::ID);
   device_id &= 0x07;
-  switch(device_id)
+  switch (device_id)
   {
-    // ADS114S08
-    case 0x04:
-      num_channels = 12;
-      break;
+  // ADS114S08
+  case 0x04:
+    num_channels = 12;
+    break;
 
-    // ADS114S06
-    case 0x05:
-      num_channels = 6;
-      break;
+  // ADS114S06
+  case 0x05:
+    num_channels = 6;
+    break;
 
-    // Didn't find device. Handle error.
-    default:
-      break;
+  // Didn't find device. Handle error.
+  default:
+    break;
   }
 
   reset();
   set_channel(0);
 }
 
-
 uint8_t DeviceDriver::get_num_channels(void)
 {
   return num_channels;
 }
-
 
 uint8_t DeviceDriver::get_device_id(void)
 {
@@ -110,7 +102,6 @@ void DeviceDriver::set_channel(uint8_t ch_plus, uint8_t ch_minus)
   // negative values.
 }
 
-
 // ADC reset - see datasheet p. 88
 void DeviceDriver::reset(void)
 {
@@ -120,7 +111,6 @@ void DeviceDriver::reset(void)
   spi.write(ADS114S08_CMD::RESET);
   delay_nanos(ADS114S08_TIMING::T_CLK * 4096);
 }
-
 
 // Retrieve data from ADC data-holding register - see datasheet p. 68
 // - Writes from ADC Data-holding register
@@ -143,11 +133,38 @@ uint16_t DeviceDriver::read_adc_by_rdata_cmd()
   return msb | lsb;
 }
 
+// Read a byte
+uint8_t DeviceDriver::read_register(uint8_t reg_addr)
+{
+  uint8_t num_reads     = 1;
+  uint8_t five_bit_addr = (reg_addr & 0x1f);
+  uint8_t five_bit_size = (num_reads - 1) & 0x1f;
 
+  spi.write(ADS114S08_CMD::RREG_1ST | five_bit_addr);
+  spi.write(ADS114S08_CMD::RREG_2ND | five_bit_size);
+
+  return spi.transfer(ADS114S08_CMD::NOP);
+}
+
+// Write a byte
+void DeviceDriver::write_register(uint8_t reg_addr, uint8_t write_val)
+{
+  uint8_t num_writes    = 1;
+  uint8_t five_bit_addr = reg_addr & 0x1f;
+  uint8_t five_bit_size = (num_writes - 1) & 0x1f;
+
+  spi.write(ADS114S08_CMD::WREG_1ST | five_bit_addr);
+  spi.write(ADS114S08_CMD::WREG_2ND | five_bit_size);
+  spi.write(write_val);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// bonus content! (TODO)
+///////////////////////////////////////////////////////////////////////////////
+
+/*
 // This is just me playing around and testing the fidelity of my emulated ADC
-void DeviceDriver::read_multi_registers(uint8_t start_reg,
-                                        uint8_t num_reads,
-                                        std::vector<uint8_t>& vec)
+void DeviceDriver::read_multi_registers(uint8_t start_reg, uint8_t num_reads, std::vector<uint8_t> &vec)
 {
   uint8_t five_bit_addr = (start_reg & 0x1f);
   uint8_t five_bit_size = (num_reads - 1) & 0x1f;
@@ -163,51 +180,17 @@ void DeviceDriver::read_multi_registers(uint8_t start_reg,
   }
 }
 
-
-// Read a byte
-uint8_t DeviceDriver::read_register(uint8_t reg_addr)
-{
-  uint8_t num_reads = 1;
-  uint8_t five_bit_addr = (reg_addr & 0x1f);
-  uint8_t five_bit_size = (num_reads - 1) & 0x1f;
-
-  spi.write(ADS114S08_CMD::RREG_1ST | five_bit_addr);
-  spi.write(ADS114S08_CMD::RREG_2ND | five_bit_size);
-
-  return spi.transfer(ADS114S08_CMD::NOP);
-}
-
-
-// Write a byte
-void DeviceDriver::write_register(uint8_t reg_addr, uint8_t write_val)
-{
-  uint8_t num_writes = 1;
-  uint8_t five_bit_addr = reg_addr & 0x1f;
-  uint8_t five_bit_size = (num_writes - 1) & 0x1f;
-
-  spi.write(ADS114S08_CMD::WREG_1ST | five_bit_addr);
-  spi.write(ADS114S08_CMD::WREG_2ND | five_bit_size);
-  spi.write(write_val);
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// bonus content!
-///////////////////////////////////////////////////////////////////////////////
-
 // Wouldn't do this in an actual device driver because of the dynamic memory
 // allocation going on under the hood, I used this for verifying the fidelity
 // of my ADC Emulator
 uint8_t DeviceDriver::read_register_alt(uint8_t reg)
 {
   std::vector<uint8_t> vec;
-  static uint8_t read_count = 1;
+  static uint8_t       read_count = 1;
   read_multi_registers(reg, read_count, vec);
 
   return vec[0];
 }
-
 
 // TaskHandle_t direct_read_adc_task_handle(nulltptr);
 
@@ -218,7 +201,6 @@ void adc_ready_isr()
   // xTaskNotifyGiveFromISR(direct_read_adc_task_handle, &xHigherPriorityTaskWoken);
   // // portYIELD_FROM_ISR(xHigherPriorityTaskWoken );  // Switch to ADC task if required (optional)
 }
-
 
 // Direct Read  - see datasheet p. 67
 // Writes directly from (continuously updating) OUTPUT SHIFT REGISTER
@@ -268,3 +250,4 @@ void start_adc_task()
   // );
 }
 
+*/
